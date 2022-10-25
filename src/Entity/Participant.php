@@ -7,10 +7,12 @@ use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[ApiResource]
-class Participant
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,6 +21,12 @@ class Participant
 
     #[ORM\Column(length: 100)]
     private ?string $name = null;
+
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $login = null;
+
+    #[ORM\Column]
+    private array $roles = [];
 
     #[ORM\Column(length: 100)]
     private ?string $firstName = null;
@@ -29,6 +37,9 @@ class Participant
     #[ORM\Column(length: 255)]
     private ?string $mail = null;
 
+    /**
+     * @var string The hashed password
+     */
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
@@ -71,6 +82,18 @@ class Participant
         return $this;
     }
 
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(string $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -107,6 +130,9 @@ class Participant
         return $this;
     }
 
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -195,5 +221,43 @@ class Participant
         $this->organisatorExcursions->removeElement($excursion);
 
         return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->login;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }
