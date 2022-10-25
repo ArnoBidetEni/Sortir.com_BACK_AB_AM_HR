@@ -46,6 +46,9 @@ class Excursion
     private ?Participant $organisator = null;
 
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'excursions')]
+    #[ORM\JoinTable(name: 'excursions_participants')]
+    #[ORM\JoinColumn(name: "excursion_id", referencedColumnName: "excursionId")]
+    #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participantId')]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]

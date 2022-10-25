@@ -41,9 +41,17 @@ class Participant
     #[ORM\OneToMany(mappedBy: 'organisator', targetEntity: Excursion::class)]
     private Collection $organisatorExcursions;
 
+    #[ORM\ManyToMany(mappedBy: 'participant', targetEntity: Excursion::class)]
+    #[ORM\JoinTable(name: 'excursions_participants')]
+    #[ORM\JoinColumn(name: "participant_id", referencedColumnName: "participant_id")]
+    #[ORM\InverseJoinColumn(name: 'excursion_id', referencedColumnName: 'excursionId')]
+    private Collection $excursions;
+
+
     public function __construct()
     {
         $this->organisatorExcursions = new ArrayCollection();
+        $this->excursions = new ArrayCollection();
     }
 
     public function getParticipantId(): ?int
@@ -161,6 +169,30 @@ class Participant
                 $excursion->setOrganisator(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Excursion>
+     */
+    public function getExcursions(): Collection
+    {
+        return $this->excursions;
+    }
+
+    public function addExcursion(Excursion $excursion): self
+    {
+        if (!$this->excursions->contains($excursion)) {
+            $this->excursions->add($excursion);
+        }
+
+        return $this;
+    }
+
+    public function removeExcursion(Excursion $excursion): self
+    {
+        $this->organisatorExcursions->removeElement($excursion);
 
         return $this;
     }
