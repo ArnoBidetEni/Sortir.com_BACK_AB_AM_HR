@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -23,7 +24,17 @@ class LoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // TODO: Implement onAuthenticationSuccess() method.
+        $response = parent::onAuthenticationSuccess($request, $token, "main");
+
+        $tokenJWT = json_decode($response->getContent(), true)['token'];
+
+        // Ajoute le token avec l'id de l'utilisateur en clé dans les Redis configurés, avec le ttl contenu dans la conf
+        $this->rms->set($this->redisDB, $token->getUser()->getId(), $tokenJWT, $this->jwtTokenTTL);
+
+        // Crée le cookie contenant le token, avec le ttl contenu dans la conf
+        $response->headers->setCookie(new Cookie('CERBERE', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT' . $this->jwtTokenTTL . 'S')), '/', null, $this->cookieSecure));
+
+        return $response;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
