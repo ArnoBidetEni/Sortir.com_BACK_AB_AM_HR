@@ -49,8 +49,6 @@ class Excursion
     #[ORM\JoinTable(name: 'excursions_participants')]
     #[ORM\JoinColumn(name: 'excursion_id', referencedColumnName: 'excursion_id')]
     #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participant_id')]
-    // #[ORM\JoinColumn(referencedColumnName: "excursion_id")]
-    // #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participant_id')]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
