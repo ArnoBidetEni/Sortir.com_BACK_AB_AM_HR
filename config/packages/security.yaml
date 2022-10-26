@@ -23,11 +23,8 @@ security:
             pattern:   ^/api
             stateless: true
             entry_point: jwt
-            json_login:
-                check_path: /api/login # or, if you have defined a route for your login path, the route name you used
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            jwt: ~
+            jwt: 
+                authenticator: app.custom_authenticator
             refresh_jwt:
                 check_path: /api/token/refresh # or, you may use the `api_refresh_token` route name
         api_token_refresh:
