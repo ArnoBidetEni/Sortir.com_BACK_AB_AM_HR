@@ -53,12 +53,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $active = null;
 
     #[ORM\OneToMany(mappedBy: 'organisator', targetEntity: Excursion::class)]
+    #[ORM\JoinColumn(referencedColumnName:"id", nullable: false)]
     private Collection $organisatorExcursions;
 
-    #[ORM\ManyToMany(mappedBy: 'participant', targetEntity: Excursion::class)]
+    #[ORM\ManyToMany(mappedBy: 'participants', targetEntity: Excursion::class)]
     #[ORM\JoinTable(name: 'excursions_participants')]
-    #[ORM\JoinColumn(name: "participant_id", referencedColumnName: "participant_id")]
-    #[ORM\InverseJoinColumn(name: 'excursion_id', referencedColumnName: 'excursionId')]
     private Collection $excursions;
 
 

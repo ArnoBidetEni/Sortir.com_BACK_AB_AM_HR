@@ -34,25 +34,27 @@ class Excursion
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
-    #[ORM\JoinColumn(referencedColumnName:"placeId", nullable: false)]
+    #[ORM\JoinColumn(referencedColumnName:"place_id", nullable: false)]
     private ?Place $excursionPlace = null;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
-    #[ORM\JoinColumn(referencedColumnName:"statusId", nullable: false)]
+    #[ORM\JoinColumn(referencedColumnName:"status_id", nullable: false)]
     private ?Status $status = null;
 
-    #[ORM\ManyToOne(inversedBy: 'excursions')]
-    #[ORM\JoinColumn(referencedColumnName:"participantId", nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'organisatorExcursions')]
+    #[ORM\JoinColumn(referencedColumnName:"participant_id", nullable: false)]
     private ?Participant $organisator = null;
 
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'excursions')]
     #[ORM\JoinTable(name: 'excursions_participants')]
-    #[ORM\JoinColumn(name: "excursion_id", referencedColumnName: "excursionId")]
-    #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participantId')]
+    #[ORM\JoinColumn(name: 'excursion_id', referencedColumnName: 'excursion_id')]
+    #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participant_id')]
+    // #[ORM\JoinColumn(referencedColumnName: "excursion_id")]
+    // #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participant_id')]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
-    #[ORM\JoinColumn(referencedColumnName:"campusId", nullable: false)]
+    #[ORM\JoinColumn(referencedColumnName:"campus_id", nullable: false)]
     private ?Campus $campus = null;
 
     public function __construct()

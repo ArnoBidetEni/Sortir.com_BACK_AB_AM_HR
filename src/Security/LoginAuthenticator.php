@@ -26,6 +26,7 @@ class LoginAuthenticator extends AbstractAuthenticator
     {
         // TODO: Implement authenticate() method.
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
+
         if (null === $apiToken) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
@@ -42,7 +43,8 @@ class LoginAuthenticator extends AbstractAuthenticator
         $tokenJWT = json_decode($response->getContent(), true)['token'];
 
         // Ajoute le token avec l'id de l'utilisateur en clé dans les Redis configurés, avec le ttl contenu dans la conf
-        $this->rms->set($this->redisDB, $token->getUser()->getId(), $tokenJWT, $this->jwtTokenTTL);
+        $this->rms->set($this->redisDB, "test", $tokenJWT, $this->jwtTokenTTL);
+        // $this->rms->set($this->redisDB, $token->getUser()->getId(), $tokenJWT, $this->jwtTokenTTL);
 
         // Crée le cookie contenant le token, avec le ttl contenu dans la conf
         $response->headers->setCookie(new Cookie('access_token', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT' . $this->jwtTokenTTL . 'S')), '/', null, $this->cookieSecure));
