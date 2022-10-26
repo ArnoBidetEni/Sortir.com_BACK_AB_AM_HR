@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[ApiResource]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
@@ -31,7 +33,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100)]
     private ?string $firstName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 10)]
+    #[Assert\Regex('/^(0)[1-9](\d{2}){4}$/gm')]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(length: 255)]
