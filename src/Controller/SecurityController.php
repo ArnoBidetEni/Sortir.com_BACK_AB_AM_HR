@@ -5,10 +5,15 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
+use Doctrine\Persistence\ManagerRegistry;
+
+use App\Entity\Participant;
 
 class SecurityController extends AbstractController
 {
@@ -26,18 +31,25 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/api/me', name: 'api_me', methods: ['GET'])]
-    public function getUserDatas(Request $request)
+    public function getUserDatas(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
-        // $decodedJwtToken = $this->jwtManager->decode($this->tokenStorageInterface->getToken());
+        $requestAuthorizationToken = $request->server->getHeaders()['AUTHORIZATION'];
 
-        $cookie = $request->cookie->get('access_token');
-        dd($cookie);
-        // $token = ;
-        // $tokenParts = explode(".", $token);  
-        // $tokenHeader = base64_decode($tokenParts[0]);
-        // $tokenPayload = base64_decode($tokenParts[1]);
+        $accessToken = trim($requestAuthorizationToken, 'Bearer ');
+
+        $tokenParts = explode(".", $accessToken);
+        $tokenHeader = base64_decode($tokenParts[0]);
+        $tokenPayload = base64_decode($tokenParts[1]);
         // $jwtHeader = json_decode($tokenHeader);
-        // $jwtPayload = json_decode($tokenPayload);
-        // print $jwtPayload->username;
+        $jwtPayload = json_decode($tokenPayload);
+
+        $username = $jwtPayload->username;
+
+        $participant = $doctrine->getRepository(Participant::class)
+            ->findOneBy(['login'=> $username]);
+
+        $participant->setPassword("");
+
+        return new JsonResponse($participant);
     }
 }

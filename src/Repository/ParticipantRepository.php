@@ -41,7 +41,7 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
             $this->getEntityManager()->flush();
         }
     }
-
+    
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */

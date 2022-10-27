@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+#[AsEventListener(
+    event: 'lexik_jwt_authentication.on_authentication_success',
+    method: 'onAuthenticationSuccessTest',
+    priority: 10)]
 class LoginAuthenticator extends AbstractAuthenticator
 {
     public function supports(Request $request): ?bool
@@ -36,22 +43,40 @@ class LoginAuthenticator extends AbstractAuthenticator
         return new SelfValidatingPassport(new UserBadge($apiToken));
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    public function onAuthenticationSuccessTest(AuthenticationSuccessEvent $event)
     {
-        $response = parent::onAuthenticationSuccess($request, $token, "main");
-
-        $tokenJWT = json_decode($response->getContent(), true)['token'];
+        // dd($event);
+        $tokenJWT = $event->getData()['token'];
+        
+        $response = $event->getResponse();
+        
+        $userId = $event->getUser()->getParticipantId();
 
         // Ajoute le token avec l'id de l'utilisateur en clé dans les Redis configurés, avec le ttl contenu dans la conf
-        $this->rms->set($this->redisDB, "test", $tokenJWT, $this->jwtTokenTTL);
-        // $this->rms->set($this->redisDB, $token->getUser()->getId(), $tokenJWT, $this->jwtTokenTTL);
+        // $this->rms->set($this->redisDB, $userId, $tokenJWT, $this->jwtTokenTTL);
 
         // Crée le cookie contenant le token, avec le ttl contenu dans la conf
-        $response->headers->setCookie(new Cookie('access_token', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT' . $this->jwtTokenTTL . 'S')), '/', null, $this->cookieSecure));
+        $response->headers->setCookie(new Cookie('access_token', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT200S')), '/', null, true));
 
         return $response;
     }
+    
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    {
+    //     $response = parent::onAuthenticationSuccess($request, $token, "main");
 
+    //     $tokenJWT = json_decode($response->getContent(), true)['token'];
+
+    //     // Ajoute le token avec l'id de l'utilisateur en clé dans les Redis configurés, avec le ttl contenu dans la conf
+    //     $this->rms->set($this->redisDB, "test", $tokenJWT, $this->jwtTokenTTL);
+    //     $this->rms->set($this->redisDB, $token->getUser()->getId(), $tokenJWT, $this->jwtTokenTTL);
+
+    //     // Crée le cookie contenant le token, avec le ttl contenu dans la conf
+    //     $response->headers->setCookie(new Cookie('access_token', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT' . $this->jwtTokenTTL . 'S')), '/', null, $this->cookieSecure));
+
+    //     return $response;
+    }
+    
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [

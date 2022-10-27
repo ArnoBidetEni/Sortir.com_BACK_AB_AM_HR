@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\Participant;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,6 +21,9 @@ class RegisterController extends AbstractController
         $login = $request->get('login');
         $password = $request->get('password');
 
+        $campus = new Campus();
+        $campus->setName("Saint-Herblain");
+
         $user = new Participant();
         $user->setName("Doe");
         $user->setFirstName("John");
@@ -28,6 +32,7 @@ class RegisterController extends AbstractController
         $user->setActive(true);
         $user->setPhoneNumber('0102030405');
         $user->setMail($login . "@campus-eni.fr");
+        $user->setCampus($campus);
 
         $hashedPassword = $passwordHasher->hashPassword(
             $user,
@@ -37,6 +42,7 @@ class RegisterController extends AbstractController
         $user->setPassword($hashedPassword);
 
         $em = $doctrine->getManager();
+        $em->persist($campus);
         $em->persist($user);
         $em->flush();
 
