@@ -60,6 +60,10 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'excursions_participants')]
     private Collection $excursions;
 
+    #[ORM\ManyToOne(inversedBy: 'participants')]
+    #[ORM\JoinColumn(referencedColumnName:"campus_id", nullable: false)]
+    private ?Campus $campus = null;
+
 
     public function __construct()
     {
@@ -261,5 +265,17 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): self
+    {
+        $this->campus = $campus;
+
+        return $this;
     }
 }
