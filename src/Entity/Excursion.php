@@ -55,6 +55,9 @@ class Excursion
     #[ORM\JoinColumn(referencedColumnName:"campus_id", nullable: false)]
     private ?Campus $campus = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $excursionData = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -193,6 +196,18 @@ class Excursion
     public function setCampus(?Campus $campus): self
     {
         $this->campus = $campus;
+
+        return $this;
+    }
+
+    public function getExcursionData(): ?string
+    {
+        return $this->excursionData;
+    }
+
+    public function setExcursionData(?string $excursionData): self
+    {
+        $this->excursionData = $excursionData;
 
         return $this;
     }
