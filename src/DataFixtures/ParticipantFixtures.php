@@ -2,26 +2,40 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Participant;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ParticipantFixtures extends Fixture
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+use App\Entity\Participant;
+
+class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const ADMIN_USER = "admin";
+    public const USER_1 = "user_1";
+    public const USER_2 = "user_2";
+    public const USER_3 = "user_3";
+    public const USER_4 = "user_4";
+    public const USER_5 = "user_5";
+
     public function __construct(
-        private ObjectManager $manager
+        private UserPasswordHasherInterface $passwordHasher
     ){}
 
-    public function load(): void
+    public function load(ObjectManager $manager): void
     {
-        $this->createAdmin();
+        $this->createAdmin($manager);
+        $this->createUser1($manager);
+        $this->createUser2($manager);
+        $this->createUser3($manager);
+        $this->createUser4($manager);
+        $this->createUser5($manager);
     }
 
-    private function createAdmin()
+    private function createAdmin($manager)
     {
         $admin = new Participant();
-
         $admin->setName("Admin");
         $admin->setFirstName("Admin");
         $admin->setLogin('administrator');
@@ -29,16 +43,150 @@ class ParticipantFixtures extends Fixture
         $admin->setActive(true);
         $admin->setPhoneNumber('0102030405');
         $admin->setMail("administrator@campus-eni.fr");
-        $admin->setCampus($campus);
+        $admin->setCampus($this->getReference(CampusFixtures::CAMPUS_SAINT_HERBLAIN));
 
-        $hashedPassword = $passwordHasher->hashPassword(
+        $hashedPassword = $this->passwordHasher->hashPassword(
             $admin,
-            $password
+            "Admin"
         );
 
         $admin->setPassword($hashedPassword);
 
-        $this->manager->persist($admin);
-        $this->manager->flush();
+        $manager->persist($admin);
+        $manager->flush();
+
+        $this->addReference(self::ADMIN_USER, $admin);
+    }
+
+    private function createUser1($manager)
+    {
+        $user = new Participant();
+        $user->setName("Spinoza");
+        $user->setFirstName("Baruch");
+        $user->setLogin('bspinoza');
+        $user->setAdministrator(true);
+        $user->setActive(true);
+        $user->setPhoneNumber('0508080808');
+        $user->setMail("spinoza@gmail.com");
+        $user->setCampus($this->getReference(CampusFixtures::CAMPUS_SAINT_HERBLAIN));
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            "zekfnrjfrerrfoi"
+        );
+
+        $user->setPassword($hashedPassword);
+
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference(self::USER_1, $user);
+    }
+
+    private function createUser2($manager)
+    {
+        $user = new Participant();
+        $user->setName("Sansamis");
+        $user->setFirstName("Rémy");
+        $user->setLogin('rsansamis');
+        $user->setAdministrator(false);
+        $user->setActive(true);
+        $user->setPhoneNumber('0508080809');
+        $user->setMail("remy@gmail.com");
+        $user->setCampus($this->getReference(CampusFixtures::CAMPUS_SAINT_HERBLAIN));
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            "jfrpfhqioafz"
+        );
+
+        $user->setPassword($hashedPassword);
+
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference(self::USER_2, $user);
+    }
+
+    private function createUser3($manager)
+    {
+        $user = new Participant();
+        $user->setName("Jojo");
+        $user->setFirstName("Joestar");
+        $user->setLogin('jjoestar');
+        $user->setAdministrator(false);
+        $user->setActive(true);
+        $user->setPhoneNumber('0508080810');
+        $user->setMail("jojo@gmail.com");
+        $user->setCampus($this->getReference(CampusFixtures::CAMPUS_SAINT_HERBLAIN));
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            "jfrpfhqioafz"
+        );
+
+        $user->setPassword($hashedPassword);
+
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference(self::USER_3, $user);
+    }
+
+    private function createUser4($manager)
+    {
+        $user = new Participant();
+        $user->setName("Dertre");
+        $user->setFirstName("Bertrand");
+        $user->setLogin('bdertre');
+        $user->setAdministrator(false);
+        $user->setActive(true);
+        $user->setPhoneNumber('0508080811');
+        $user->setMail("bertrand@gmail.com");
+        $user->setCampus($this->getReference(CampusFixtures::CAMPUS_SAINT_HERBLAIN));
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            "4435434q4fz"
+        );
+
+        $user->setPassword($hashedPassword);
+
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference(self::USER_4, $user);
+    }
+
+    private function createUser5($manager)
+    {
+        $user = new Participant();
+        $user->setName("Lafarge");
+        $user->setFirstName("Jeanine");
+        $user->setLogin('jlafarge');
+        $user->setAdministrator(false);
+        $user->setActive(true);
+        $user->setPhoneNumber('0508080812');
+        $user->setMail("lafarge@gmail.com");
+        $user->setCampus($this->getReference(CampusFixtures::CAMPUS_SAINT_HERBLAIN));
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            "jzifziofseifso"
+        );
+
+        $user->setPassword($hashedPassword);
+
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference(self::USER_5, $user);
+    }
+
+    public function getDependencies()
+    {
+        return [
+            CampusFixtures::class,
+        ];
     }
 }
