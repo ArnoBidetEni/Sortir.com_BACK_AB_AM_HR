@@ -41,6 +41,16 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getMe(string $username): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.participantId, p.login, p.firstName, p.lastName, p.mail, p.phoneNumber, p.administrator')   
+            ->where('p.login = :username')
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     
     /**
      * Used to upgrade (rehash) the user's password automatically over time.

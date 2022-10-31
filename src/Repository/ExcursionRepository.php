@@ -39,6 +39,18 @@ class ExcursionRepository extends ServiceEntityRepository
         }
     }
 
+    public function editStatusFinishedExcursions(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.excursionId, e.startTime, s.statusId, s.duration')
+            ->leftJoin('e.status', 's')
+            ->where('s.statusId IN (:authorizedStatus)')
+            // ->setParameter('authorizedStatus', [2, 4])
+            ->setParameter('authorizedStatus', [5])
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Excursion[] Returns an array of Excursion objects
 //     */
