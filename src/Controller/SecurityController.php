@@ -38,7 +38,7 @@ class SecurityController extends AbstractController
         $accessToken = trim($requestAuthorizationToken, 'Bearer ');
 
         $tokenParts = explode(".", $accessToken);
-        $tokenHeader = base64_decode($tokenParts[0]);
+        // $tokenHeader = base64_decode($tokenParts[0]);
         $tokenPayload = base64_decode($tokenParts[1]);
         // $jwtHeader = json_decode($tokenHeader);
         $jwtPayload = json_decode($tokenPayload);
@@ -46,10 +46,8 @@ class SecurityController extends AbstractController
         $username = $jwtPayload->username;
 
         $participant = $doctrine->getRepository(Participant::class)
-            ->findOneBy(['login'=> $username]);
+        ->getMe($username);
 
-        $participant->setPassword("");
-
-        return new JsonResponse($participant);
+        return $this->json($participant);
     }
 }

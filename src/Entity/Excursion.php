@@ -3,59 +3,85 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ExcursionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: ExcursionRepository::class)]
-#[ApiResource]
+#[ApiResource()]
+#[Get(normalizationContext: ['groups' => ['excursion']])]
+#[GetCollection(normalizationContext: ['groups' => ['excursions']])]
+#[Post(security:"is_granted(['ROLE_USER', 'ROLE_ADMIN'])")]
+#[Delete(security:"is_granted('ROLE_ADMIN') or object.getOrganisator() == user")]
+#[Put(security:"is_granted('ROLE_ADMIN') or object.getOrganisator() == user")]
+#[Patch(security:"is_granted('ROLE_ADMIN') or object.getOrganisator() == user")]
 class Excursion
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['excursion', 'excursions'])]
     private ?int $excursionId = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['excursion', 'excursions'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['excursion', 'excursions'])]
     private ?\DateTimeInterface $startTime = null;
 
     #[ORM\Column]
+    #[Groups(['excursion', 'excursions'])]
     private ?int $duration = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $limiteDateRegistration = null;
+    #[Groups(['excursion', 'excursions'])]
+    private ?\DateTimeInterface $limitDateRegistration = null;
 
     #[ORM\Column]
+    #[Groups(['excursion', 'excursions'])]
     private ?int $maxRegistrationNumber = null;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
     #[ORM\JoinColumn(referencedColumnName:"place_id", nullable: false)]
+    #[Groups(['excursion', 'excursions'])]
     private ?Place $excursionPlace = null;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
     #[ORM\JoinColumn(referencedColumnName:"status_id", nullable: false)]
+    #[Groups('excursions')]
     private ?Status $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'organisatorExcursions')]
     #[ORM\JoinColumn(referencedColumnName:"participant_id", nullable: false)]
+    #[Groups(['excursion', 'excursions'])]
     private ?Participant $organisator = null;
 
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'excursions')]
     #[ORM\JoinTable(name: 'excursions_participants')]
     #[ORM\JoinColumn(name: 'excursion_id', referencedColumnName: 'excursion_id')]
     #[ORM\InverseJoinColumn(name: 'participant_id', referencedColumnName: 'participant_id')]
+    #[Groups(['excursion', 'excursions'])]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'excursions')]
     #[ORM\JoinColumn(referencedColumnName:"campus_id", nullable: false)]
+    #[Groups(['excursion', 'excursions'])]
     private ?Campus $campus = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['excursion', 'excursions'])]
     private ?string $excursionData = null;
 
     public function __construct()
@@ -104,14 +130,14 @@ class Excursion
         return $this;
     }
 
-    public function getLimiteDateRegistration(): ?\DateTimeInterface
+    public function getLimitDateRegistration(): ?\DateTimeInterface
     {
-        return $this->limiteDateRegistration;
+        return $this->limitDateRegistration;
     }
 
-    public function setLimiteDateRegistration(\DateTimeInterface $limiteDateRegistration): self
+    public function setLimitDateRegistration(\DateTimeInterface $limitDateRegistration): self
     {
-        $this->limiteDateRegistration = $limiteDateRegistration;
+        $this->limitDateRegistration = $limitDateRegistration;
 
         return $this;
     }

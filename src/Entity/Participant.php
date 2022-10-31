@@ -3,41 +3,68 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
+use App\Controller\DisableAUserController;
 use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-#[ApiResource]
+#[ApiResource(operations: [
+    new Post(
+        name: 'disableUser', 
+        uriTemplate: '/disableUser/{participantId}', 
+        controller: DisableAUserController::class,
+        read: false,
+        security:"is_granted('ROLE_ADMIN')"
+    )
+])]
+#[Get(normalizationContext: ['groups' => ['participant']])]
+#[GetCollection()]
+#[Post(security:"is_granted('ROLE_ADMIN')")]
+#[Put(security:"is_granted('ROLE_ADMIN')")]
+#[Patch(security:"is_granted('ROLE_ADMIN')")]
+#[Delete(security:"is_granted('ROLE_ADMIN')")]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?int $participantId = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $name = null;
+    #[Groups(['excursion', 'excursions', 'participant'])]
+    private ?string $lastName = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?string $login = null;
 
     #[ORM\Column]
     private array $roles = [];
 
     #[ORM\Column(length: 100)]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 10)]
     #[Assert\Regex('/^(0)[1-9](\d{2}){4}$/gm')]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?string $mail = null;
 
     /**
@@ -47,9 +74,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
+    #[Groups(['excursion', 'excursions'])]
     private ?bool $administrator = null;
 
     #[ORM\Column]
+    #[Groups(['excursion', 'excursions'])]
     private ?bool $active = null;
 
     #[ORM\OneToMany(mappedBy: 'organisator', targetEntity: Excursion::class)]
@@ -62,6 +91,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(referencedColumnName:"campus_id", nullable: false)]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?Campus $campus = null;
 
 
@@ -76,14 +106,14 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->participantId;
     }
 
-    public function getName(): ?string
+    public function getLastName(): ?string
     {
-        return $this->name;
+        return $this->lastName;
     }
 
-    public function setName(string $name): self
+    public function setLastName(string $lastName): self
     {
-        $this->name = $name;
+        $this->lastName = $lastName;
 
         return $this;
     }
