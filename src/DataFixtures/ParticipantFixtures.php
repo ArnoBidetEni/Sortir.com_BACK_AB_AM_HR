@@ -36,9 +36,9 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     private function createAdmin($manager)
     {
         $admin = new Participant();
-        $admin->setName("Admin");
+        $admin->setLastName("Admin");
         $admin->setFirstName("Admin");
-        $admin->setLogin('administrator');
+        $admin->setLogin('admin');
         $admin->setAdministrator(true);
         $admin->setActive(true);
         $admin->setPhoneNumber('0102030405');
@@ -47,7 +47,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 
         $hashedPassword = $this->passwordHasher->hashPassword(
             $admin,
-            "Admin"
+            "pwd"
         );
 
         $admin->setPassword($hashedPassword);
@@ -61,7 +61,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     private function createUser1($manager)
     {
         $user = new Participant();
-        $user->setName("Spinoza");
+        $user->setLastName("Spinoza");
         $user->setFirstName("Baruch");
         $user->setLogin('bspinoza');
         $user->setAdministrator(true);
@@ -72,7 +72,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
-            "zekfnrjfrerrfoi"
+            "pwd"
         );
 
         $user->setPassword($hashedPassword);
@@ -86,7 +86,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     private function createUser2($manager)
     {
         $user = new Participant();
-        $user->setName("Sansamis");
+        $user->setLastName("Sansamis");
         $user->setFirstName("Rémy");
         $user->setLogin('rsansamis');
         $user->setAdministrator(false);
@@ -97,7 +97,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
-            "jfrpfhqioafz"
+            "pwd"
         );
 
         $user->setPassword($hashedPassword);
@@ -111,7 +111,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     private function createUser3($manager)
     {
         $user = new Participant();
-        $user->setName("Jojo");
+        $user->setLastName("Jojo");
         $user->setFirstName("Joestar");
         $user->setLogin('jjoestar');
         $user->setAdministrator(false);
@@ -122,7 +122,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
-            "jfrpfhqioafz"
+            "pwd"
         );
 
         $user->setPassword($hashedPassword);
@@ -136,7 +136,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     private function createUser4($manager)
     {
         $user = new Participant();
-        $user->setName("Dertre");
+        $user->setLastName("Dertre");
         $user->setFirstName("Bertrand");
         $user->setLogin('bdertre');
         $user->setAdministrator(false);
@@ -147,7 +147,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
-            "4435434q4fz"
+            "pwd"
         );
 
         $user->setPassword($hashedPassword);
@@ -161,7 +161,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
     private function createUser5($manager)
     {
         $user = new Participant();
-        $user->setName("Lafarge");
+        $user->setLastName("Lafarge");
         $user->setFirstName("Jeanine");
         $user->setLogin('jlafarge');
         $user->setAdministrator(false);
@@ -172,7 +172,7 @@ class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
-            "jzifziofseifso"
+            "pwd"
         );
 
         $user->setPassword($hashedPassword);

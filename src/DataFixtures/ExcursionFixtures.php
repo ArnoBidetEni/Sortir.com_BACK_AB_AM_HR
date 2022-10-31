@@ -29,7 +29,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Philo");
         $excursion->setStartTime(new DateTime("2018-07-19T23:45:00"));
         $excursion->setDuration(60);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-10"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-10"));
         $excursion->setMaxRegistrationNumber(8);
         $excursion->setExcursionData("On va parler de Kant ouech ouech");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -49,7 +49,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Origami");
         $excursion->setStartTime(new DateTime("2018-07-21T20:00:00"));
         $excursion->setDuration(45);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-09"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-09"));
         $excursion->setMaxRegistrationNumber(5);
         $excursion->setExcursionData("Aujourd'hui, pliage de feuille avec les enfants du canton");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -69,7 +69,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Perles");
         $excursion->setStartTime(new DateTime("2018-07-21T20:00:00"));
         $excursion->setDuration(60);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-10"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-10"));
         $excursion->setMaxRegistrationNumber(12);
         $excursion->setExcursionData("On enfile des perles, avant d'enfiler ta m***");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -88,7 +88,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Concert metal");
         $excursion->setStartTime(new DateTime("2018-07-21T20:30:00"));
         $excursion->setDuration(90);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-20"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-20"));
         $excursion->setMaxRegistrationNumber(8);
         $excursion->setExcursionData("Sortie au Hellfest");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -107,7 +107,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Jardinage");
         $excursion->setStartTime(new DateTime("2018-07-21T20:30:00"));
         $excursion->setDuration(90);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-20"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-20"));
         $excursion->setMaxRegistrationNumber(8);
         $excursion->setExcursionData("On plante des carottes");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -128,7 +128,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Cinéma");
         $excursion->setStartTime(new DateTime("2018-08-02T18:30:00"));
         $excursion->setDuration(45);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-08-01"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-08-01"));
         $excursion->setMaxRegistrationNumber(5);
         $excursion->setExcursionData("On va voir matrix. Pilule bleue ou pilule rouge ?");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -150,7 +150,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Pâte à sel");
         $excursion->setStartTime(new DateTime("2018-08-04T21:00:00"));
         $excursion->setDuration(90);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-20"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-20"));
         $excursion->setMaxRegistrationNumber(10);
         $excursion->setExcursionData("Saucisses, doigts, carottes, aubergines, concombre... le tout en pâte à sel !");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
@@ -168,7 +168,7 @@ class ExcursionFixtures extends Fixture implements DependentFixtureInterface
         $excursion->setName("Programmation");
         $excursion->setStartTime(new DateTime("2023-08-03T19:30:00"));
         $excursion->setDuration(90);
-        $excursion->setLimiteDateRegistration(new DateTime("2018-07-27"));
+        $excursion->setLimitDateRegistration(new DateTime("2018-07-27"));
         $excursion->setMaxRegistrationNumber(5);
         $excursion->setExcursionData("Aujour'hui on apprend WordPr... Non mais rester je promet ça va être bien !");
         $excursion->setExcursionPlace($this->getReference(PlaceFixtures::PLACE_PLACE_TRAVOT));
