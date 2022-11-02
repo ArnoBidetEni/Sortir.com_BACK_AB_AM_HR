@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use App\Controller\DisableAUserController;
+use App\Controller\GetMeDatasController;
 use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,7 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         controller: DisableAUserController::class,
         read: false,
         security:"is_granted('ROLE_ADMIN')"
-    )
+    ),
+    new Get(
+        name: 'getMe',
+        uriTemplate: '/me', 
+        controller: GetMeDatasController::class,
+        read: false,
+        security:"is_granted('ROLE_ADMIN') || is_granted('ROLE_USER')"
+    ),
 ])]
 #[Get(normalizationContext: ['groups' => ['participant']])]
 #[GetCollection()]

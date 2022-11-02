@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use App\Entity\Participant;
+use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +18,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 #[AsEventListener(
     event: 'lexik_jwt_authentication.on_authentication_success',
@@ -23,6 +26,10 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
     priority: 10)]
 class LoginAuthenticator extends AbstractAuthenticator
 {
+    public function __construct(
+        private ManagerRegistry $doctrine
+    ){}
+
     public function supports(Request $request): ?bool
     {
         // TODO: Implement supports() method.
@@ -45,18 +52,22 @@ class LoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccessTest(AuthenticationSuccessEvent $event)
     {
-        // dd($event);
         $tokenJWT = $event->getData()['token'];
         
         $response = $event->getResponse();
         
         $userId = $event->getUser()->getParticipantId();
 
-        // Ajoute le token avec l'id de l'utilisateur en clé dans les Redis configurés, avec le ttl contenu dans la conf
-        // $this->rms->set($this->redisDB, $userId, $tokenJWT, $this->jwtTokenTTL);
+        $user = $this->doctrine->getRepository(Participant::class)->findOneBy(['participantId' => $userId]);
 
-        // Crée le cookie contenant le token, avec le ttl contenu dans la conf
-        $response->headers->setCookie(new Cookie('access_token', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT200S')), '/', null, true));
+        if ($user->isActive())
+        {
+            $response->headers->setCookie(new Cookie('access_token', $tokenJWT, (new \DateTime())->add(new \DateInterval('PT200S')), '/', null, true));
+
+        } else {
+
+            throw new UnauthorizedHttpException("User disabled", "Utilisateur désactivé");
+        }
 
         return $response;
     }

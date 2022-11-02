@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Excursion;
 use App\Repository\ExcursionRepository;
 use DateInterval;
 use DateTime;
@@ -17,7 +18,7 @@ class ChangeStatusFinishedExcursion extends Command
 {
     public function __construct(
         private ExcursionRepository $excursionRepository,
-        private ManagerRegistry $managerRegistry
+        private ManagerRegistry $doctrine
     ){
         parent::__construct();
     }
@@ -41,6 +42,8 @@ class ChangeStatusFinishedExcursion extends Command
             
             for ($i=0; $i < sizeof($datas); $i++)
             {
+                $excursion = $this->doctrine->getRepository(Excursion::class)->findOneBy(['excursionId' => $datas[$i]['excursionId']]);
+
                 $actualDate = new DateTime();
 
                 if ($datas[$i]['statusId'] === 2)
@@ -48,7 +51,7 @@ class ChangeStatusFinishedExcursion extends Command
                     if ($datas[$i]['startTime'] > $actualDate)
                     {
                         dd("L'excursion vient de commencé");
-                        $datas[$i]->setStatus(4);
+                        $excursion->setStatus(4);
                     }
                 }
                 else if ($datas[$i]['statusId'] === 4)
@@ -57,7 +60,7 @@ class ChangeStatusFinishedExcursion extends Command
 
                     if ($endOfTheExcursion > $actualDate)
                     {
-                        $datas[$i]->setStatus(5);
+                        $excursion->setStatus(5);
                     }
                 }
                 else {
@@ -65,7 +68,7 @@ class ChangeStatusFinishedExcursion extends Command
                 }
 
                 $em = $this->doctrine->getManager();
-                $em->persist($datas[$i]);
+                $em->persist($excursion);
             }
 
             $em->flush();
