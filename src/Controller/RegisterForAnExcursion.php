@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,7 +18,7 @@ class RegisterForAnExcursion extends AbstractController
         private ManagerRegistry $doctrine
     ){}
 
-    public function __invoke(int $excursionId, int $participantId): void
+    public function __invoke(int $excursionId, int $participantId): JsonResponse
     {
         $excursion = $this->checkIfExcursionExist($excursionId);
 
@@ -38,6 +39,8 @@ class RegisterForAnExcursion extends AbstractController
             $em = $this->doctrine->getManager();
             $em->persist($excursion);
             $em->flush();
+
+            return new JsonResponse("Register succeeded");
 
         }else {
 

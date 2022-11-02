@@ -25,11 +25,43 @@ use Symfony\Component\Serializer\Annotation\Groups;
         name: 'registerForAnExcursion',
         uriTemplate: '/excursion/{excursionId}/register/{participantId}',
         controller: RegisterForAnExcursion::class,
+        read: false,
+        openapiContext: [
+            'summary' => 'Register for an excursion', 
+            'description' => 'Register as a user for an excursion', 
+            'requestBody' => [
+                'content' => [
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'object', 
+                            'properties' => "{}"
+                        ], 
+                        'example' => "{}"
+                    ]
+                ]
+            ]
+        ]
     ),
     new Post(
         name: 'withdrawForAnExcursion',
         uriTemplate: '/excursion/{excursionId}/withdraw/{participantId}',
         controller: WithdrawFromAnExcursion::class,
+        read: false,
+        openapiContext: [
+            'summary' => 'Withdraw for an excursion', 
+            'description' => 'Withdrawing as a user from an excursion', 
+            'requestBody' => [
+                'content' => [
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'object', 
+                            'properties' => "{}"
+                        ], 
+                        'example' => "{}"
+                    ]
+                ]
+            ]
+        ]
     ),
 ])]
 #[Get(normalizationContext: ['groups' => ['excursion']])]
