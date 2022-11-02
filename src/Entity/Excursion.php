@@ -9,6 +9,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\RegisterForAnExcursion;
+use App\Controller\WithdrawFromAnExcursion;
 use App\Repository\ExcursionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,10 +20,21 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ExcursionRepository::class)]
-#[ApiResource()]
+#[ApiResource(operations: [
+    new Post(
+        name: 'registerForAnExcursion',
+        uriTemplate: '/excursion/{excursionId}/register/{participantId}',
+        controller: RegisterForAnExcursion::class,
+    ),
+    new Post(
+        name: 'withdrawForAnExcursion',
+        uriTemplate: '/excursion/{excursionId}/withdraw/{participantId}',
+        controller: WithdrawFromAnExcursion::class,
+    ),
+])]
 #[Get(normalizationContext: ['groups' => ['excursion']])]
 #[GetCollection(normalizationContext: ['groups' => ['excursions']])]
-#[Post(security:"is_granted(['ROLE_USER', 'ROLE_ADMIN'])")]
+#[Post()]
 #[Delete(security:"is_granted('ROLE_ADMIN') or object.getOrganisator() == user")]
 #[Put(security:"is_granted('ROLE_ADMIN') or object.getOrganisator() == user")]
 #[Patch(security:"is_granted('ROLE_ADMIN') or object.getOrganisator() == user")]
