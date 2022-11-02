@@ -9,7 +9,6 @@ use App\Entity\Status;
 
 class StatusFixtures extends Fixture
 {
-    public const STATUS_CREATE = "créée";
     public const STATUS_OPENED = "ouverte";
     public const STATUS_CLOSED = "clôturée";
     public const STATUS_CURRENT = "activitée en cours";
@@ -19,24 +18,12 @@ class StatusFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $this->createCreate($manager);
         $this->createOpened($manager);
         $this->createClosed($manager);
         $this->createCurrent($manager);
         $this->createPast($manager);
         $this->createCancelled($manager);
         $this->createCreationInProgress($manager);
-    }
-
-    private function createCreate(ObjectManager $manager)
-    {
-        $status = new Status();
-        $status->setName("Créée");
-
-        $manager->persist($status);
-        $manager->flush();
-
-        $this->addReference(self::STATUS_CREATE, $status);
     }
 
     private function createOpened(ObjectManager $manager)
