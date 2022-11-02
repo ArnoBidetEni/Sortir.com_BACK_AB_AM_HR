@@ -5,27 +5,29 @@ namespace App\Command;
 use App\Repository\ExcursionRepository;
 use DateInterval;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 // the name of the command is what users type after "php bin/console"
-#[AsCommand(name: 'app:changeStatusFinishedExcursion')]
+#[AsCommand(name: 'app:changeStatusExcursion')]
 class ChangeStatusFinishedExcursion extends Command
 {
     public function __construct(
-        private ExcursionRepository $excursionRepository
+        private ExcursionRepository $excursionRepository,
+        private ManagerRegistry $managerRegistry
     ){
         parent::__construct();
     }
 
     protected function configure () {
         // On set le nom de la commande
-        $this->setName('app:changeStatusFinishedExcursion');
+        $this->setName('app:changeStatusExcursion');
 
         // On set la description
-        $this->setDescription("Permet de changer le statut des excursions qui sont finies");
+        $this->setDescription("Permet de changer le statut des excursions en fonction des dates");
 
         // On set l'aide
         $this->setHelp("Je serai affiche si on lance la commande bin/console app:create-user -h");
@@ -37,40 +39,38 @@ class ChangeStatusFinishedExcursion extends Command
 
         if ($datas) {
             
-            for ($i=0; $i < sizeof($datas); $i++) { 
+            for ($i=0; $i < sizeof($datas); $i++)
+            {
+                $actualDate = new DateTime();
 
                 if ($datas[$i]['statusId'] === 2)
                 {
-                    $actualDate = new DateTime();
-
-                    $endOfTheExcursion = $datas[$i]['startTime']->add(new DateInterval('PT' . $datas[$i]['duration'] . 'M'));
-
-                    if ($endOfTheExcursion > $actualDate)
+                    if ($datas[$i]['startTime'] > $actualDate)
                     {
                         dd("L'excursion vient de commencé");
                         $datas[$i]->setStatus(4);
                     }
-                    
-                    
-                } else {
-                    dd($datas[$i]);
                 }
-                
+                else if ($datas[$i]['statusId'] === 4)
+                {
+                    $endOfTheExcursion = $datas[$i]['startTime']->add(new DateInterval('PT' . $datas[$i]['duration'] . 'M'));
+
+                    if ($endOfTheExcursion > $actualDate)
+                    {
+                        $datas[$i]->setStatus(5);
+                    }
+                }
+                else {
+                    # code...
+                }
+
+                $em = $this->doctrine->getManager();
+                $em->persist($datas[$i]);
             }
+
+            $em->flush();
         }
-        else {
-            dd("Pas de données");
-        }
 
-        // dd($datas);
-
-        // ... put here the code to create the user
-
-        // this method must return an integer number with the "exit status code"
-        // of the command. You can also use these constants to make code more readable
-
-        // return this if there was no problem running the command
-        // (it's equivalent to returning int(0))
         $output->writeln("La commande c'est bien passée!");
         return Command::SUCCESS;
 

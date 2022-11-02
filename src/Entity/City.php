@@ -35,7 +35,7 @@ class City
     private ?string $name = null;
 
     #[ORM\Column(length: 5)]
-    #[Assert\Regex('/^\d{5}$/gm')]
+    #[Assert\Regex('/^\d{5}$/m')]
     #[Groups('excursion')]
     private ?string $postCode = null;
 
