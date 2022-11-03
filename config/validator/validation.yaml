@@ -1,0 +1,7 @@
+App\Entity\Participant:
+    properties:
+        picture:
+            - File:
+                maxSize: 2000k
+                mimeTypes: [image/jpeg, image/png]
+                mimeTypesMessage: Please upload a valid picture

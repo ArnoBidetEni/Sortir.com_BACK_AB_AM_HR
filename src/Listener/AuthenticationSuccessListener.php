@@ -22,7 +22,6 @@ class AuthenticationSuccessListener
 
     public function onAuthenticationSuccessResponse(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        dd($request);
         $tokenJWT = $request->getData()['token'];
         
         $response = $request->getResponse();
@@ -39,7 +38,6 @@ class AuthenticationSuccessListener
 
         return $response;
 
-    //     dd('Coucou, tu veux voir ma bille ?');
     //     $data = $event->getData();
     //     $user = $event->getUser();
     //     if (!$user instanceof UserInterface) {

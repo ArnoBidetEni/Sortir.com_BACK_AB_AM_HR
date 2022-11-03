@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use App\Controller\DisableAUserController;
+use App\Controller\EditParticipant;
 use App\Controller\GetMeDatasController;
 use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,6 +20,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[ApiResource(operations: [
@@ -41,7 +44,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[GetCollection()]
 #[Post(security:"is_granted('ROLE_ADMIN')")]
 #[Put(security:"is_granted('ROLE_ADMIN')")]
-#[Patch(security:"is_granted('ROLE_ADMIN')")]
+#[Patch(
+    name: 'editParticipant',
+    uriTemplate: '/participants/{participantId}',
+    controller: EditParticipant::class,
+    // read: false,
+    security:"is_granted('ROLE_ADMIN')"
+)]
 #[Delete(security:"is_granted('ROLE_ADMIN')")]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -67,7 +76,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstName = null;
 
     #[ORM\Column(length: 10)]
-    #[Assert\Regex('/^(0)[1-9](\d{2}){4}$/gm')]
+    #[Assert\Regex('/^(0)[1-9](\d{2}){4}$/m')]
     #[Groups(['excursion', 'excursions', 'participant'])]
     private ?string $phoneNumber = null;
 
@@ -82,11 +91,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    #[Groups(['excursion', 'excursions'])]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?bool $administrator = null;
 
     #[ORM\Column]
-    #[Groups(['excursion', 'excursions'])]
+    #[Groups(['excursion', 'excursions', 'participant'])]
     private ?bool $active = null;
 
     #[ORM\OneToMany(mappedBy: 'organisator', targetEntity: Excursion::class)]
@@ -103,8 +112,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Campus $campus = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('participant')]
     private ?string $picture = null;
-
 
     public function __construct()
     {
