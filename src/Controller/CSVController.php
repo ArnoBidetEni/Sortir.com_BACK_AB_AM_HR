@@ -5,30 +5,31 @@ namespace App\Controller;
 use App\Entity\Campus;
 use App\Entity\Participant;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Asset\Package;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use League\Csv\Reader;
 use League\Csv\Statement;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-
-class RegisterController extends AbstractController
+class CSVController extends AbstractController
 {
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, private UserPasswordHasherInterface $passwordHasher)
     {
-        parent::__construct();
+        // parent::__construct();
         $this->em = $em;
     }
     
-    #[Route('/csv', name: 'csv_import', methods: ['POST'])]
-    public function exec()
+    #[Route('/api/csv', name: 'csv_import', methods: ['POST'])]
+    public function exec(Request $request)
     {
+
+        $csvFile = $request->files->get('file');
 
         // verifier que c'est un csv 
          // %% name 3 derniers caractères extension type   
-        $reader = Reader::createFromPath('C:\Users\hrouff2021\Sortir.com_AB_AM_HR_Back\Sortir.com_BACK_AB_AM_HR\Classeur.csv');
+        $reader = Reader::createFromPath($csvFile);
         $reader->setHeaderOffset(0);
         $records = Statement::create()->process($reader);
 
@@ -61,33 +62,39 @@ class RegisterController extends AbstractController
 
             $campus = new Campus();
             $campus = $this->em->getRepository(Campus::class)
-            ->findOneBy([
-                'name' => $value5]);   
+            ->findOneBy(['name' => $value5]);   
             
                 if ($campus == null)
                 {
                     $campus = new Campus();
-                   $campus->setName($value5);
-                   $this->em->persist($campus);
+                    $campus->setName($value5);
+                    $this->em->persist($campus);
                 }
 
             $participant = new Participant();
             $participant = $this->em->getRepository(Participant::class)
             ->findOneBy([
-                'login' => $value2]);   
-            
+                'login' => $value2]);
+
                 if ($participant == null)
                 {
-                $participant = (new Participant())
-                ->setName( $value0 )
-                ->setFirstName( $value1 )
-                ->setLogin( $value2 )
-                ->setAdministrator(false)
-                ->setActive(true)
-                ->setPhoneNumber($value3)
-                ->setCampus($campus)
-                ->setMail($value4)
-                ->setPassword($this->generateRandomString(8));
+                    $participant = (new Participant())
+                        ->setLastName( $value0 )
+                        ->setFirstName( $value1 )
+                        ->setLogin( $value2 )
+                        ->setAdministrator(false)
+                        ->setActive(true)
+                        ->setPhoneNumber($value3)
+                        ->setCampus($campus)
+                        ->setMail($value4);
+
+                        $hashedPassword = $this->passwordHasher->hashPassword(
+                            $participant,
+                            $this->generateRandomString(8)
+                        );
+
+
+                        $participant->setPassword($hashedPassword);
                 } 
 
             $this->em->persist($participant);
@@ -95,11 +102,8 @@ class RegisterController extends AbstractController
             }
         }
 
-      
-
+        return new JsonResponse("Successfully request");
     }
-
-
 
     function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%!:;,^$*';

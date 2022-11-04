@@ -6,7 +6,6 @@ use App\Entity\Participant;
 use App\Service\FileUploader;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -37,10 +36,7 @@ class ParticipantProfilePicture extends AbstractController
         {
             if($participant->getPicture())
             {
-                // print($participant->getPicture());
-                // unlink('%kernel.project_dir%/public/uploads/profilePictures/'.$participant->getPicture());
-                $fileSystem = new Filesystem();
-                $fileSystem->remove('/uploads/profilePictures/'.$participant->getPicture());
+                unlink($this->getParameter('profile_pictures_directory') . $participant->getPicture());
             }
 
             $requestProfilePicture = $request->files->get('file');
